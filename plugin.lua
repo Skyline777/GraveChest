@@ -8,7 +8,7 @@
   --To do: add functionality to make sure that the chest is not placed in lava/bedrock basically anywhere that would reneder the use of the plugin u and to check if
     --the chest has enough slots to hold complete inventory.
 
-
+--TODO comprobar si un cofre esta cerca, hacer que el cofre no se cree si el inventario esta vacio, hacer que el cofre no haga drop de cofre.
 
 
 function Initialize(Plugin)
@@ -31,14 +31,23 @@ function OnKilling(Victim, Killer, TDI)
     Victim:GetWorld():CastThunderbolt(Victim:GetPosition().x, Victim:GetPosition().y, Victim:GetPosition().z);
     --Build the chest and face no sure what ZM is yet...
     Victim:GetWorld():SetBlock(Victim:GetPosition().x,(Victim:GetPosition().y +2) , Victim:GetPosition().z, E_BLOCK_CHEST, E_META_CHEST_FACING_ZM)
+    Victim:GetWorld():SetBlock(Victim:GetPosition().x +1,(Victim:GetPosition().y +2) , Victim:GetPosition().z, E_BLOCK_CHEST, E_META_CHEST_FACING_ZM)
     --get the players items and copy them to a chest
     local Items = cItems()
     local TESTVAR = Victim:GetInventory()
     TESTVAR:CopyToItems(Items)
-    Victim:GetWorld():DoWithChestAt(Victim:GetPosition().x, (Victim:GetPosition().y +2), Victim:GetPosition().z,
-			function(a_Chest)
-				a_Chest:GetContents():AddItems(Items)
-			end)
+    Victim:GetWorld():DoWithChestAt(
+		Victim:GetPosition().x, (Victim:GetPosition().y +2), Victim:GetPosition().z,
+		function(a_Chest)
+			a_Chest:GetContents():AddItems(Items)
+		end
+	)
+	Victim:GetWorld():DoWithChestAt(
+		Victim:GetPosition().x +1, (Victim:GetPosition().y +2), Victim:GetPosition().z,
+		function(a_Chest)
+			a_Chest:GetContents():AddItems(Items)
+		end
+	)
     --Remove the items from the inventory so that when the player dies the system doesnt drop
     Victim:GetInventory():Clear()      
      
